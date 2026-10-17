@@ -8,6 +8,10 @@ import { cn } from "@/lib/utils";
 
 import { ConfigurationSelects } from "../../upload/components/ConfigurationSelects";
 import { PresentationConfig } from "../../upload/type";
+import {
+  isReferenceFidelityEnabled,
+  setReferenceFidelityEnabled,
+} from "../utils/reference-fidelity";
 
 interface OutlinePromptBarProps {
   config: PresentationConfig;
@@ -92,20 +96,6 @@ const OutlinePromptBar: React.FC<OutlinePromptBarProps> = ({
   );
 };
 
-const REFERENCE_FIDELITY_START = "[PRESENTON_REFERENCE_FIDELITY_BEGIN]";
-const REFERENCE_FIDELITY_END = "[PRESENTON_REFERENCE_FIDELITY_END]";
-const REFERENCE_FIDELITY_INSTRUCTIONS = [
-  REFERENCE_FIDELITY_START,
-  "REFERENCE FIDELITY MODE — STRICT DESIGN PRESERVATION",
-  "- The selected template is the source of truth for visual design. Keep its layout, element positions, dimensions, alignment, spacing, colors, typography, image treatment, backgrounds, logos, decorative elements, and whitespace.",
-  "- Prefer the closest existing reference layout for each slide. Do not invent a new layout or redesign the slide when an existing reference layout can be reused.",
-  "- Replace only editable content fields. Preserve fixed/decorative source elements and reuse existing source assets whenever appropriate.",
-  "- Fit content to the available space: shorten copy or simplify wording before changing font size, position, geometry, or layout.",
-  "- Use only facts supported by the uploaded material. Mark gaps as unknown instead of inventing data.",
-  "- Do not claim that native PowerPoint animations or transitions are preserved unless the export path actually retains them.",
-  REFERENCE_FIDELITY_END,
-].join("\n");
-
 function ReferenceFidelityControl({
   config,
   disabled,
@@ -116,27 +106,13 @@ function ReferenceFidelityControl({
   onConfigChange: (key: keyof PresentationConfig, value: unknown) => void;
 }) {
   const instructions = config.instructions || "";
-  const enabled = instructions.includes(REFERENCE_FIDELITY_START);
+  const enabled = isReferenceFidelityEnabled(instructions);
 
   const setEnabled = (nextEnabled: boolean) => {
-    let nextInstructions = instructions;
-    const startIndex = nextInstructions.indexOf(REFERENCE_FIDELITY_START);
-    if (startIndex >= 0) {
-      const endIndex = nextInstructions.indexOf(REFERENCE_FIDELITY_END, startIndex);
-      if (endIndex >= 0) {
-        nextInstructions = (
-          nextInstructions.slice(0, startIndex) +
-          nextInstructions.slice(endIndex + REFERENCE_FIDELITY_END.length)
-        ).trim();
-      }
-    }
-
-    if (nextEnabled) {
-      nextInstructions = [nextInstructions, REFERENCE_FIDELITY_INSTRUCTIONS]
-        .filter(Boolean)
-        .join("\n\n");
-    }
-    onConfigChange("instructions", nextInstructions);
+    onConfigChange(
+      "instructions",
+      setReferenceFidelityEnabled(instructions, nextEnabled),
+    );
   };
 
   return (
