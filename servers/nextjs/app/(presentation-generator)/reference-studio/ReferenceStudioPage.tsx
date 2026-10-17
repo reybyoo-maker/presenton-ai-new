@@ -3,7 +3,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AlertCircle,
   ArrowRight,
@@ -28,6 +28,7 @@ import { clearOutlines, setPresentationId } from "@/store/slices/presentationGen
 import { setPptGenUploadState } from "@/store/slices/presentationGenUpload";
 import { setReferenceFidelityEnabled } from "../outline/utils/reference-fidelity";
 import { parseLimitedSlideCount } from "@/utils/presentationLimits";
+import { RootState } from "@/store/store";
 
 const MAX_FILE_BYTES = 100 * 1024 * 1024;
 const DEFAULT_REFERENCE_PROMPT = "Buat presentasi baru berdasarkan seluruh materi mentah yang diunggah. Gunakan PPTX contoh sebagai acuan gaya visual, bukan sekadar template untuk ditempeli teks. Pertahankan identitas desainnya: palet warna, karakter font, hierarki judul, grid, spasi, bentuk, latar, dekorasi, perlakuan gambar, dan gaya komposisi. Susun isi dengan alur yang logis dan sesuai fakta sumber. Buat ilustrasi atau visual baru yang relevan untuk setiap bagian yang membutuhkan visual, dengan arah seni yang konsisten dengan referensi; jangan gunakan ulang gambar lama bila tidak relevan, jangan mengulang gambar yang sama di semua slide, dan jangan tinggalkan area visual sebagai placeholder kosong. Ubah data sumber menjadi grafik, diagram proses, timeline, perbandingan, atau infografik jika sesuai; angka hanya boleh berasal dari file sumber. Pilih layout referensi yang paling cocok untuk isi masing-masing slide dan buat variasi yang seimbang. Hasil harus terlihat seperti presentasi yang didesain dengan utuh, bukan hanya mengganti teks. Pastikan teks ringkas, terbaca, tidak terpotong, dan komposisi visual seimbang. Jangan mengarang fakta. Pertahankan logo dan elemen identitas merek. Animasi/transisi hanya dipertahankan jika jalur ekspor mendukungnya.";
@@ -209,6 +210,31 @@ export default function ReferenceStudioPage() {
   const [fontWarning, setFontWarning] = useState<string[]>([]);
   const [statusNote, setStatusNote] = useState("");
   const referenceFile = referenceFiles[0] ?? null;
+  const providerConfig = useSelector((state: RootState) => state.userConfig);
+  const imageProviderReady = useMemo(() => {
+    const config = providerConfig;
+    if (!config.IMAGE_PROVIDER || config.DISABLE_IMAGE_GENERATION) return false;
+    switch (config.IMAGE_PROVIDER) {
+      case "gemini_flash":
+      case "nanobanana_pro":
+        return Boolean(config.GOOGLE_API_KEY);
+      case "gpt-image-2":
+      case "gpt-image-1.5":
+        return Boolean(config.OPENAI_API_KEY);
+      case "pexels":
+        return Boolean(config.PEXELS_API_KEY);
+      case "pixabay":
+        return Boolean(config.PIXABAY_API_KEY);
+      case "comfyui":
+        return Boolean(config.COMFYUI_URL);
+      case "open_webui":
+        return Boolean(config.OPEN_WEBUI_IMAGE_URL);
+      case "openai_compatible":
+        return Boolean(config.OPENAI_COMPAT_IMAGE_BASE_URL && config.OPENAI_COMPAT_IMAGE_MODEL);
+      default:
+        return false;
+    }
+  }, [providerConfig]);
 
   const generatedLayoutCount = useMemo(
     () => templateFlow.slides.filter((slide) => slide.processed && !slide.error).length,
@@ -227,6 +253,10 @@ export default function ReferenceStudioPage() {
     }
     if (materialFiles.length === 0) {
       setError("Upload minimal satu file materi mentah agar AI punya sumber konten.");
+      return;
+    }
+    if (!imageProviderReady) {
+      setError("Image provider belum siap. Buka Settings → Image Provider, aktifkan Image Generation, pilih Gemini Flash (dengan Google API key) atau provider gambar lain yang sudah memiliki kredensial. Tanpa ini, slide bisa berisi placeholder alih-alih ilustrasi.");
       return;
     }
 if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 300 * 1024 * 1024) {
@@ -361,6 +391,10 @@ if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 3
           <p className="mx-auto mt-4 max-w-[650px] text-base leading-7 text-[#707186] sm:text-lg">
             Upload PPTX contoh dan materi mentah. Studio akan membaca desain referensi, menyusun cerita baru dari materi, membuat visual yang relevan, lalu mengirim hasil ke editor untuk diperiksa. Prompt bawaan sudah disiapkan dan bisa kamu ubah.
           </p>
+          <div className="mx-auto mt-5 flex max-w-[650px] flex-col items-start justify-between gap-3 rounded-xl border border-[#E5DFFF] bg-white px-4 py-3 text-left sm:flex-row sm:items-center">
+            <p className="text-sm leading-5 text-[#55566D]">Ilustrasi baru membutuhkan image provider yang aktif. Kalau belum dikonfigurasi, generator dapat menghasilkan placeholder—jadi studio akan memeriksanya sebelum mulai.</p>
+            <Link href="/settings" className="shrink-0 rounded-lg border border-[#DCD6FF] bg-[#F8F6FF] px-3 py-2 text-sm font-semibold text-[#6941C6] hover:bg-[#F1EDFF]">Atur visual engine ↗</Link>
+          </div>
         </div>
 
         <div className="mx-auto mt-10 grid max-w-[1080px] gap-5 lg:grid-cols-2">
