@@ -30,6 +30,7 @@ import { setReferenceFidelityEnabled } from "../outline/utils/reference-fidelity
 import { parseLimitedSlideCount } from "@/utils/presentationLimits";
 
 const MAX_FILE_BYTES = 100 * 1024 * 1024;
+const DEFAULT_REFERENCE_PROMPT = "Buat presentasi baru berdasarkan seluruh materi mentah yang diunggah. Gunakan PPTX contoh sebagai acuan gaya visual, bukan sekadar template untuk ditempeli teks. Pertahankan identitas desainnya: palet warna, karakter font, hierarki judul, grid, spasi, bentuk, latar, dekorasi, perlakuan gambar, dan gaya komposisi. Susun isi dengan alur yang logis dan sesuai fakta sumber. Buat ilustrasi atau visual baru yang relevan untuk setiap bagian yang membutuhkan visual, dengan arah seni yang konsisten dengan referensi; jangan gunakan ulang gambar lama bila tidak relevan, jangan mengulang gambar yang sama di semua slide, dan jangan tinggalkan area visual sebagai placeholder kosong. Ubah data sumber menjadi grafik, diagram proses, timeline, perbandingan, atau infografik jika sesuai; angka hanya boleh berasal dari file sumber. Pilih layout referensi yang paling cocok untuk isi masing-masing slide dan buat variasi yang seimbang. Hasil harus terlihat seperti presentasi yang didesain dengan utuh, bukan hanya mengganti teks. Pastikan teks ringkas, terbaca, tidak terpotong, dan komposisi visual seimbang. Jangan mengarang fakta. Pertahankan logo dan elemen identitas merek. Animasi/transisi hanya dipertahankan jika jalur ekspor mendukungnya.";
 const ACCEPTED_MATERIALS = ".pdf,.doc,.docx,.docm,.odt,.rtf,.ppt,.pptx,.pptm,.odp,.xls,.xlsx,.xlsm,.ods,.csv,.tsv,.txt,.md,.jpg,.jpeg,.png,.gif,.bmp,.tif,.tiff,.webp,.svg";
 
 type StudioStage = "idle" | "font-check" | "render-reference" | "analyze-reference" | "upload-materials" | "prepare-presentation";
@@ -199,7 +200,7 @@ export default function ReferenceStudioPage() {
 
   const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
   const [materialFiles, setMaterialFiles] = useState<File[]>([]);
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(DEFAULT_REFERENCE_PROMPT);
   const [slideCount, setSlideCount] = useState("10");
   const [language, setLanguage] = useState<LanguageType>(LanguageType.Indonesian);
   const [stage, setStage] = useState<StudioStage>("idle");
@@ -228,14 +229,12 @@ export default function ReferenceStudioPage() {
       setError("Upload minimal satu file materi mentah agar AI punya sumber konten.");
       return;
     }
-    if (!prompt.trim()) {
-      setError("Tulis prompt yang menjelaskan hasil presentasi yang kamu butuhkan.");
-      return;
-    }
-    if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 300 * 1024 * 1024) {
+if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 300 * 1024 * 1024) {
       setError("Total file melebihi batas kerja 300 MB. Kurangi jumlah atau ukuran file.");
       return;
     }
+
+    const effectivePrompt = prompt.trim() || DEFAULT_REFERENCE_PROMPT;
 
     setBusy(true);
     setError(null);
@@ -299,7 +298,7 @@ export default function ReferenceStudioPage() {
       const config: PresentationConfig = {
         slides: slideCount,
         language,
-        prompt: prompt.trim(),
+        prompt: effectivePrompt,
         tone: ToneType.Professional,
         verbosity: VerbosityType.Standard,
         instructions,
@@ -309,7 +308,7 @@ export default function ReferenceStudioPage() {
       };
 
       const created = await PresentationGenerationApi.createPresentation({
-        content: prompt.trim(),
+        content: effectivePrompt,
         version: "v2-standard",
         n_slides: parseLimitedSlideCount(slideCount),
         file_paths: documentPaths,
@@ -357,10 +356,10 @@ export default function ReferenceStudioPage() {
             <Sparkles className="h-3.5 w-3.5" /> PRESENTON · REFERENCE STUDIO
           </div>
           <h1 className="text-balance font-syne text-3xl font-semibold tracking-[-1.1px] text-[#17172B] sm:text-5xl">
-            PPT baru, mengikuti desain referensimu.
+            PPT baru, dengan gaya visual referensimu.
           </h1>
           <p className="mx-auto mt-4 max-w-[650px] text-base leading-7 text-[#707186] sm:text-lg">
-            Upload PPTX contoh, masukkan materi mentah, lalu tulis prompt. Presenton akan membuat template dari referensi dan mengirim presentasi ke editor dengan mode penjagaan desain aktif.
+            Upload PPTX contoh dan materi mentah. Studio akan membaca desain referensi, menyusun cerita baru dari materi, membuat visual yang relevan, lalu mengirim hasil ke editor untuk diperiksa. Prompt bawaan sudah disiapkan dan bisa kamu ubah.
           </p>
         </div>
 
@@ -392,7 +391,7 @@ export default function ReferenceStudioPage() {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F1EEFF] text-[#6941C6]"><Sparkles className="h-5 w-5" /></div>
             <div>
               <h2 className="text-base font-semibold text-[#18182A]">3. Prompt pekerjaan</h2>
-              <p className="mt-1 text-sm leading-5 text-[#727386]">Jelaskan tujuan, isi wajib, target audiens, gaya bahasa, serta hal yang tidak boleh diubah.</p>
+              <p className="mt-1 text-sm leading-5 text-[#727386]">Instruksi bawaan sudah aktif: menyesuaikan desain referensi, membuat ilustrasi yang relevan, dan memakai data hanya dari materi. Kamu boleh menambahkan arahan khusus.</p>
             </div>
           </div>
 
@@ -400,7 +399,7 @@ export default function ReferenceStudioPage() {
             value={prompt}
             disabled={busy}
             onChange={(event) => setPrompt(event.target.value)}
-            placeholder="Contoh: Buat presentasi 10 slide untuk laporan kinerja marketing. Gunakan semua angka dari dokumen sumber, jangan mengarang data. Ikuti desain referensi, pertahankan warna, posisi judul, font, gambar dan hierarki visual. Ringkas teks yang terlalu panjang agar tetap muat."
+            placeholder="Tambahkan target audiens, tujuan presentasi, atau catatan khusus. Instruksi visual dan ilustrasi bawaan sudah aktif."
             rows={5}
             className="mt-4 w-full resize-y rounded-xl border border-[#DCDCE8] bg-[#FCFCFF] px-4 py-3.5 text-sm leading-6 text-[#25253A] outline-none transition placeholder:text-[#9A9BAD] focus:border-[#9784F7] focus:ring-4 focus:ring-[#7A5AF8]/10 disabled:opacity-60"
           />
