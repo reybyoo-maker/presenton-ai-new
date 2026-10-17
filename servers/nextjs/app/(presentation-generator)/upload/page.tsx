@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 import UploadPage from "./components/UploadPage";
 import GenerateHeader from "./components/GenerateHeader";
@@ -59,6 +61,16 @@ const page = () => {
           <p className="max-w-[609px] font-syne text-base leading-[1.4] tracking-[0.2px] text-[#101323CC] sm:text-xl">Turn prompts or documents into presentations with AI</p>
         </div>
 
+        <div className="mb-8 flex justify-center px-4">
+          <Link
+            href="/reference-studio"
+            className="inline-flex items-center gap-2 rounded-full border border-[#DED7FF] bg-[#F7F4FF] px-4 py-2.5 text-sm font-semibold text-[#6243C6] shadow-sm transition hover:border-[#B7A5FF] hover:bg-[#F0EAFF]"
+          >
+            <Sparkles className="h-4 w-4" />
+            Buat PPT mengikuti file referensi
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
         <UploadPage
           communityEnabled={isCommunityEnabled(process.env.PRESENTON_COMMUNITY_ENABLED)}
           presentationGenerationMode={presentationGenerationMode}
