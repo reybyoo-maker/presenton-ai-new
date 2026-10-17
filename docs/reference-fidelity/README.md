@@ -4,7 +4,7 @@ This folder documents the reference-fidelity enhancement for this Presenton fork
 
 ## What this branch adds
 
-The outline-generation UI has a **Reference Fidelity Mode** checkbox. When enabled, it adds a dedicated instruction block to the existing instructions field. It tells the generation pipeline to treat the selected template as the visual source of truth, reuse compatible reference layouts and source assets, only replace editable content, keep text within the available space, and avoid inventing facts.
+The new `/reference-studio` page provides a single intake form for a reference PPTX, multiple raw-material files, a prompt, language, and slide count. It runs the existing Template V2 reference-template pipeline, uploads and extracts the raw materials, creates the presentation outline, applies strict design-preservation instructions, and automatically continues to final slide generation. The result opens in Presenton’s presentation editor. The outline-generation UI also has a **Reference Fidelity Mode** checkbox that can be used independently.
 
 The instruction logic lives in:
 
