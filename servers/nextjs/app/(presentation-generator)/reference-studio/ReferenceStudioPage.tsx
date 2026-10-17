@@ -291,7 +291,7 @@ if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 3
       setStage("prepare-presentation");
       setStatusNote("Membuat outline menggunakan materi sumber dan mengarahkan generator ke template referensi.");
       const instructions = setReferenceFidelityEnabled(
-        "STRICT MODE: use the reference-derived custom template as the visual source of truth. Preserve layout, positions, typography, colors, original visual assets and whitespace; change only editable content. Never invent facts. If a content block cannot fit, shorten it rather than redesigning the slide. Do not claim unsupported animations or transitions are preserved.",
+        "REFERENCE VISUAL MODE: treat the reference-derived template as the source of design language, not as a command to blindly replace existing text. Build a new story from the uploaded material. Match the reference palette, typography, hierarchy, spacing, composition, backgrounds, decorative motifs, and image treatment. Preserve logos and brand-specific assets, but do not reuse an old illustration or photo when it does not fit the new subject. Create relevant new illustrations, diagrams, charts, icons, and infographics for the new content using the configured visual/image provider where available. Choose the best matching reference layout for each slide and vary layouts appropriately. Never make up facts or data. Keep slides visually complete, balanced, readable, and free of overflow; shorten copy where needed. Do not claim unsupported PowerPoint animations or transitions are preserved.",
         true,
       );
 
