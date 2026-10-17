@@ -399,9 +399,11 @@ const OutlinePage: React.FC = () => {
             presentationId={presentation_id}
             selectedTemplateId={selectedTemplateId}
             suggestedTemplate={suggestedTemplate}
-            onSuggestedTemplateResolved={(template) =>
-              setSelectedTemplateId((current) => current ?? template.id)
-            }
+            onSuggestedTemplateResolved={(template) => {
+              setSelectedTemplateId((current) => current ?? template.id);
+              setIsTemplateStage(false);
+              scrollToPageTop();
+            }}
             onSelectTemplate={handleTemplateSelect}
           />
         </main>
