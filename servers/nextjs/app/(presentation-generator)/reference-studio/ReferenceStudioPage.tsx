@@ -328,7 +328,7 @@ export default function ReferenceStudioPage() {
       dispatch(setPresentationId(created.id));
 
       setStatusNote("Template siap dan materi sudah dikirim ke generator. Membuka halaman outline untuk pemeriksaan akhir.");
-      router.push("/outline?id=" + encodeURIComponent(created.id) + "&template=" + encodeURIComponent(templateId));
+      router.push("/outline?id=" + encodeURIComponent(created.id) + "&template=" + encodeURIComponent(templateId) + "&autoGenerate=1");
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Terjadi kesalahan saat membuat presentasi.";
       setError(message);
