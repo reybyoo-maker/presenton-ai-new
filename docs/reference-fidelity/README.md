@@ -4,28 +4,23 @@ This folder documents the reference-fidelity enhancement for this Presenton fork
 
 ## What this branch adds
 
-The new `/reference-studio` page provides a single intake form for a reference PPTX, multiple raw-material files, a prompt, language, and slide count. It runs the existing Template V2 reference-template pipeline, uploads and extracts the raw materials, creates the presentation outline, applies strict design-preservation instructions, and automatically continues to final slide generation. The result opens in Presenton’s presentation editor. The outline-generation UI also has a **Reference Fidelity Mode** checkbox that can be used independently.
-
-The instruction logic lives in:
-
-- servers/nextjs/app/(presentation-generator)/outline/components/OutlinePromptBar.tsx
-- servers/nextjs/app/(presentation-generator)/outline/utils/reference-fidelity.ts
-- servers/nextjs/tests/reference-fidelity-mode.test.mjs
-
-The checkbox is designed to work with Presenton's existing Template V2 workflow. It does not create a reference template automatically and does not change the template certification/export engine.
+- The `/reference-studio` page accepts one reference PPTX and multiple raw-material files in one workflow.
+- It renders the reference slides, checks fonts, analyzes layouts through Template V2, extracts the uploaded source materials, creates the presentation outline, and continues to final slide generation.
+- The default prompt and reference-fidelity instructions tell the generator to create a new content story, match the reference's design language, preserve brand identity, and create relevant illustrations, images, charts, diagrams, and infographics rather than blindly replacing text.
+- Before generation, the Studio checks that an image provider is configured so it can warn instead of silently producing placeholder-only visuals.
+- The outline-generation page also has a **Reference Fidelity Mode** toggle for use independently.
+- The instruction logic lives in:
+  - `servers/nextjs/app/(presentation-generator)/outline/components/OutlinePromptBar.tsx`
+  - `servers/nextjs/app/(presentation-generator)/outline/utils/reference-fidelity.ts`
+  - `servers/nextjs/tests/reference-fidelity-mode.test.mjs`
 
 ## Recommended workflow
 
-1. Open **Create Custom Template** (route /custom-template).
-2. Upload the **reference PPTX** whose visual design must be reused.
-3. Review the rendered slide previews and font warnings. Upload only font files you are permitted to use; select mappings for fonts that cannot be embedded or found.
-4. Finish creating the reusable Template V2 template.
-5. Upload the raw source material separately through the normal presentation workflow (PDF, DOCX, supported PPTX or other supported input).
-6. Select the custom template generated from the reference PPTX.
-7. Enable **Reference Fidelity Mode** and write the content/task-specific prompt.
-8. Inspect the generated presentation slide by slide before exporting.
-
-A PPTX reference is preferred to a PDF or screenshot because it can retain editable structure, positions, font information, image references and shapes. A screenshot-only reference can help visual analysis but cannot recover original editable slide structure.
+1. Open `/reference-studio`, upload the reference PPTX, and upload the raw-material documents.
+2. Configure a text provider in Settings. For generated illustrations, also open **Settings → Image Provider**, enable generation, and configure a provider such as Gemini Flash with a Google API key. Stock-image providers require their own credentials.
+3. Keep the built-in prompt or add audience-specific instructions, then generate the deck.
+4. Inspect the resulting slides in the editor for content accuracy, layout fit, visual relevance, and font substitutions before exporting.
+5. Check native PowerPoint animations and transitions separately; do not assume they were copied unless verified in the export.
 
 ## What this enhancement does not guarantee
 
