@@ -1,13 +1,17 @@
 "use client";
 
 import React from "react";
-import { Loader2, RotateCcw } from "lucide-react";
+import { Loader2, RotateCcw, ShieldCheck } from "lucide-react";
 
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 import { ConfigurationSelects } from "../../upload/components/ConfigurationSelects";
 import { PresentationConfig } from "../../upload/type";
+import {
+  isReferenceFidelityEnabled,
+  setReferenceFidelityEnabled,
+} from "../utils/reference-fidelity";
 
 interface OutlinePromptBarProps {
   config: PresentationConfig;
@@ -82,8 +86,96 @@ const OutlinePromptBar: React.FC<OutlinePromptBarProps> = ({
           )}
         </button>
       </div>
+
+      <ReferenceFidelityControl
+        config={config}
+        disabled={disabled}
+        onConfigChange={onConfigChange}
+      />
     </section>
   );
 };
+
+function ReferenceFidelityControl({
+  config,
+  disabled,
+  onConfigChange,
+}: {
+  config: PresentationConfig;
+  disabled: boolean;
+  onConfigChange: (key: keyof PresentationConfig, value: unknown) => void;
+}) {
+  const instructions = config.instructions || "";
+  const enabled = isReferenceFidelityEnabled(instructions);
+
+  const setEnabled = (nextEnabled: boolean) => {
+    onConfigChange(
+      "instructions",
+      setReferenceFidelityEnabled(instructions, nextEnabled),
+    );
+  };
+
+  return (
+    <div className="mt-3 rounded-[12px] border border-[#E4DFFC] bg-[#FAF9FF] px-4 py-3">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          checked={enabled}
+          disabled={disabled}
+          onChange={(event) => setEnabled(event.target.checked)}
+          className="mt-1 h-4 w-4 shrink-0 accent-[#7A5AF8]"
+          aria-label="Enable reference fidelity mode"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2 text-sm font-semibold text-[#27233A]">
+            <ShieldCheck aria-hidden="true" className="h-4 w-4 text-[#7A5AF8]" />
+            Reference Fidelity Mode
+          </span>
+          <span className="mt-1 block text-xs leading-5 text-[#67627A]">
+            Prioritizes the selected template&apos;s layout, typography, colors, and original assets. For best results, create a custom template from your reference PPTX first, then select it here.
+          </span>
+        </span>
+      </label>
+    </div>
+  );
+}
+
+export default OutlinePromptBar;");
+    const escapedEnd = REFERENCE_FIDELITY_END.replace(/[.*+?^${}()|[\]\\]/g, "\\export default OutlinePromptBar;");
+    const blockPattern = new RegExp(`${escapedStart}[\\s\\S]*?${escapedEnd}`, "g");
+    nextInstructions = nextInstructions.replace(blockPattern, "").trim();
+
+    if (nextEnabled) {
+      nextInstructions = [nextInstructions, REFERENCE_FIDELITY_INSTRUCTIONS]
+        .filter(Boolean)
+        .join("\\n\\n");
+    }
+    onConfigChange("instructions", nextInstructions);
+  };
+
+  return (
+    <div className="mt-3 rounded-[12px] border border-[#E4DFFC] bg-[#FAF9FF] px-4 py-3">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          checked={enabled}
+          disabled={disabled}
+          onChange={(event) => setEnabled(event.target.checked)}
+          className="mt-1 h-4 w-4 shrink-0 accent-[#7A5AF8]"
+          aria-label="Enable reference fidelity mode"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2 text-sm font-semibold text-[#27233A]">
+            <ShieldCheck aria-hidden="true" className="h-4 w-4 text-[#7A5AF8]" />
+            Reference Fidelity Mode
+          </span>
+          <span className="mt-1 block text-xs leading-5 text-[#67627A]">
+            Prioritizes the selected template's layout, typography, colors, and original assets. For best results, create a custom template from your reference PPTX first, then select it here.
+          </span>
+        </span>
+      </label>
+    </div>
+  );
+}
 
 export default OutlinePromptBar;

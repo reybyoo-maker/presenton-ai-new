@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelector } from "react-redux";
@@ -27,6 +28,11 @@ export default function GenerateHeader() {
           <Link href="/settings" aria-label="Configure AI providers" className="flex items-center gap-1.5 rounded-full p-1.5 hover:bg-[#F8F8FA] focus-visible:ring-2 focus-visible:ring-[#7A5AF8]">
             <span className="flex items-center" aria-hidden="true">{providers.map((provider, index) => <span key={`${provider!.value}-${index}`} className={`flex h-6 w-6 items-center justify-center overflow-hidden rounded-[3px] border border-[#EDEEEF] bg-white ${index ? "-ml-px rotate-[7deg]" : "-rotate-[6deg]"}`}><Image src={provider!.icon!} alt="" width={16} height={16} className="object-contain" /></span>)}</span>
             <span>{config.LLM === "presenton" ? "Presenton" : "BYOK"}</span>
+          </Link>
+          <span className="h-5 w-px bg-[#EDEEEF]" aria-hidden="true" />
+          <Link href="/reference-studio" aria-label="Open Reference Studio" className="inline-flex items-center gap-1.5 rounded-full p-1.5 text-[#6243C6] hover:bg-[#F7F4FF] focus-visible:ring-2 focus-visible:ring-[#7A5AF8]">
+            <Sparkles className="h-4 w-4" />
+            <span className="hidden lg:inline">Reference Studio</span>
           </Link>
           <span className="h-5 w-px bg-[#EDEEEF]" aria-hidden="true" />
           <a href="https://github.com/presenton/presenton" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full p-1.5 hover:bg-[#F8F8FA] focus-visible:ring-2 focus-visible:ring-[#7A5AF8]" aria-label="Star Presenton on GitHub"><Image src="/dashboard-header/github.svg" alt="" width={18} height={18} /><span className="hidden sm:inline">Star</span>{stars !== null && <><span aria-hidden="true">·</span><span className="text-xs">{Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(stars)}</span></>}</a>

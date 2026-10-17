@@ -88,8 +88,8 @@ const FinalStep = () => {
         router.push('/dashboard')
     }
     const handleGoToUpload = () => {
-        trackEvent(MixpanelEvent.Navigation, { from: pathname, to: "/upload" });
-        router.push('/upload')
+        trackEvent(MixpanelEvent.Navigation, { from: pathname, to: "/reference-studio" });
+        router.push('/reference-studio')
     }
     return (
         <div className='fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center'>
@@ -97,7 +97,7 @@ const FinalStep = () => {
 
                 <img src="/final_onboarding.png" alt="presenton" className='w-[118px] h-[98px]  object-contain' />
                 <h1 className='text-black text-[30px] font-normal font-syne py-2.5'>Welcome on board!</h1>
-                <p className='text-[#000000CC] text-xl font-normal font-syne'>You’re all set. Let’s create your first presentation.</p>
+                <p className='text-[#000000CC] text-xl font-normal font-syne'>You’re all set. Let’s turn your reference PPTX and raw material into a designed presentation.</p>
 
                 {trackingEnabled !== null && (
                     <div className='flex items-center gap-3 mt-8 px-5 py-3.5 rounded-[10px] border border-[#EDEEEF] bg-white'>
@@ -113,7 +113,7 @@ const FinalStep = () => {
                     </div>
                 )}
 
-                <button onClick={handleGoToUpload} className='bg-[#7C51F8] px-[23px] mt-8 py-[15px]  rounded-[70px] text-white text-lg font-syne font-semibold'>My First Presentation 🚀</button>
+                <button onClick={handleGoToUpload} className='bg-[#7C51F8] px-[23px] mt-8 py-[15px]  rounded-[70px] text-white text-lg font-syne font-semibold'>Create from My Reference PPTX ✦</button>
                 <button onClick={fireRealisticConfetti} className='mt-3 flex items-center gap-1.5 text-sm text-[#7A5AF8] font-syne font-medium hover:underline'>
                     <PartyPopper className='w-4 h-4' /> Celebrate again!
                 </button>

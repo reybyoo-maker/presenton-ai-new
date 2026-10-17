@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -118,6 +118,8 @@ const OutlinePage: React.FC = () => {
     (state: RootState) => state.presentationGeneration
   );
   const queryPresentationId = searchParams.get("id")?.trim() || null;
+  const autoGenerateRequested = searchParams.get("autoGenerate") === "1";
+  const autoGenerateStartedRef = useRef(false);
   const suggestedTemplate = searchParams.get("template")?.trim() || null;
   const presentation_id = queryPresentationId || storedPresentationId;
   const { config: savedConfig, files } = useSelector(
@@ -184,6 +186,19 @@ const OutlinePage: React.FC = () => {
       setHasOutlineStreamFinished(true);
     }
   }, [hasSelectedTemplate, outlineStreamFinished, presentation_id]);
+
+  useEffect(() => {
+    if (
+      !autoGenerateRequested ||
+      !isOutlineReady ||
+      outlines.length === 0 ||
+      autoGenerateStartedRef.current
+    ) {
+      return;
+    }
+    autoGenerateStartedRef.current = true;
+    void handleSubmit();
+  }, [autoGenerateRequested, handleSubmit, isOutlineReady, outlines.length]);
 
   const handleReturnToTemplates = () => {
     if (streamState.isStreaming) return;
@@ -399,9 +414,11 @@ const OutlinePage: React.FC = () => {
             presentationId={presentation_id}
             selectedTemplateId={selectedTemplateId}
             suggestedTemplate={suggestedTemplate}
-            onSuggestedTemplateResolved={(template) =>
-              setSelectedTemplateId((current) => current ?? template.id)
-            }
+            onSuggestedTemplateResolved={(template) => {
+              setSelectedTemplateId((current) => current ?? template.id);
+              setIsTemplateStage(false);
+              scrollToPageTop();
+            }}
             onSelectTemplate={handleTemplateSelect}
           />
         </main>

@@ -17,6 +17,7 @@ export enum LanguageType {
   // Major World Languages
   Auto = "Auto (English)",
   English = "English",
+  Indonesian = "Indonesian (Bahasa Indonesia)",
   Spanish = "Spanish (Español)",
   French = "French (Français)",
   German = "German (Deutsch)",
