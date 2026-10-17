@@ -201,7 +201,7 @@ export default function ReferenceStudioPage() {
 
   const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
   const [materialFiles, setMaterialFiles] = useState<File[]>([]);
-  const [prompt, setPrompt] = useState(DEFAULT_REFERENCE_PROMPT);
+  const [prompt, setPrompt] = useState("");
   const [slideCount, setSlideCount] = useState("10");
   const [language, setLanguage] = useState<LanguageType>(LanguageType.Indonesian);
   const [stage, setStage] = useState<StudioStage>("idle");
@@ -389,7 +389,7 @@ if (materialFiles.reduce((sum, file) => sum + file.size, referenceFile.size) > 3
             PPT baru, dengan gaya visual referensimu.
           </h1>
           <p className="mx-auto mt-4 max-w-[650px] text-base leading-7 text-[#707186] sm:text-lg">
-            Upload PPTX contoh dan materi mentah. Studio akan membaca desain referensi, menyusun cerita baru dari materi, membuat visual yang relevan, lalu mengirim hasil ke editor untuk diperiksa. Prompt bawaan sudah disiapkan dan bisa kamu ubah.
+            Upload PPTX contoh dan materi mentah. Studio akan membaca desain referensi, menyusun cerita baru dari materi, membuat visual yang relevan, lalu mengirim hasil ke editor untuk diperiksa. Instruksi desain otomatis aktif; kamu hanya perlu menambahkan arahan khusus bila perlu.
           </p>
           <div className="mx-auto mt-5 flex max-w-[650px] flex-col items-start justify-between gap-3 rounded-xl border border-[#E5DFFF] bg-white px-4 py-3 text-left sm:flex-row sm:items-center">
             <p className="text-sm leading-5 text-[#55566D]">Ilustrasi baru membutuhkan image provider yang aktif. Kalau belum dikonfigurasi, generator dapat menghasilkan placeholder—jadi studio akan memeriksanya sebelum mulai.</p>
