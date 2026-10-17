@@ -501,7 +501,7 @@ export default function ReferenceStudioPage() {
 
         <div className="mx-auto mt-6 flex max-w-[1080px] flex-col gap-2 text-center text-sm text-[#797A8D] sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p><FileCheck2 className="mr-1.5 inline h-4 w-4 align-[-3px]" /> Output akan dilanjutkan ke editor outline Presenton sebelum ekspor akhir.</p>
-          <Link href="/create" className="inline-flex items-center justify-center gap-1 font-medium text-[#6941C6] hover:underline">Kembali ke generator biasa <ArrowRight className="h-3.5 w-3.5" /></Link>
+          <Link href="/upload" className="inline-flex items-center justify-center gap-1 font-medium text-[#6941C6] hover:underline">Kembali ke generator biasa <ArrowRight className="h-3.5 w-3.5" /></Link>
         </div>
       </main>
     </div>
