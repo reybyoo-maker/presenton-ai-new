@@ -94,7 +94,17 @@ const OutlinePromptBar: React.FC<OutlinePromptBarProps> = ({
 
 const REFERENCE_FIDELITY_START = "[PRESENTON_REFERENCE_FIDELITY_BEGIN]";
 const REFERENCE_FIDELITY_END = "[PRESENTON_REFERENCE_FIDELITY_END]";
-const REFERENCE_FIDELITY_INSTRUCTIONS = "[PRESENTON_REFERENCE_FIDELITY_BEGIN]\nREFERENCE FIDELITY MODE — STRICT DESIGN PRESERVATION\n- The selected template is the source of truth for the visual design. Keep its layout, element positions, dimensions, alignment, spacing, colors, typography, image treatment, backgrounds, logos, decorative elements, and whitespace.\n- Prefer the closest existing reference layout for each slide. Do not invent a new layout or redesign the slide when an existing reference layout can be reused.\n- Replace only editable content fields. Preserve fixed/decorative source elements and reuse existing source assets whenever appropriate.\n- Fit content to the available space: shorten copy or simplify wording before changing font size, position, geometry, or layout.\n- Use only facts supported by the uploaded material. Mark gaps as unknown instead of inventing data.\n- Do not claim that native PowerPoint animations or transitions are preserved unless the export path actually retains them.\n[END PRESENTON_REFERENCE_FIDELITY_MODE]";
+const REFERENCE_FIDELITY_INSTRUCTIONS = [
+  REFERENCE_FIDELITY_START,
+  "REFERENCE FIDELITY MODE — STRICT DESIGN PRESERVATION",
+  "- The selected template is the source of truth for visual design. Keep its layout, element positions, dimensions, alignment, spacing, colors, typography, image treatment, backgrounds, logos, decorative elements, and whitespace.",
+  "- Prefer the closest existing reference layout for each slide. Do not invent a new layout or redesign the slide when an existing reference layout can be reused.",
+  "- Replace only editable content fields. Preserve fixed/decorative source elements and reuse existing source assets whenever appropriate.",
+  "- Fit content to the available space: shorten copy or simplify wording before changing font size, position, geometry, or layout.",
+  "- Use only facts supported by the uploaded material. Mark gaps as unknown instead of inventing data.",
+  "- Do not claim that native PowerPoint animations or transitions are preserved unless the export path actually retains them.",
+  REFERENCE_FIDELITY_END,
+].join("\n");
 
 function ReferenceFidelityControl({
   config,
@@ -110,7 +120,51 @@ function ReferenceFidelityControl({
 
   const setEnabled = (nextEnabled: boolean) => {
     let nextInstructions = instructions;
-    const escapedStart = REFERENCE_FIDELITY_START.replace(/[.*+?^${}()|[\]\\]/g, "\\export default OutlinePromptBar;");
+    const startIndex = nextInstructions.indexOf(REFERENCE_FIDELITY_START);
+    if (startIndex >= 0) {
+      const endIndex = nextInstructions.indexOf(REFERENCE_FIDELITY_END, startIndex);
+      if (endIndex >= 0) {
+        nextInstructions = (
+          nextInstructions.slice(0, startIndex) +
+          nextInstructions.slice(endIndex + REFERENCE_FIDELITY_END.length)
+        ).trim();
+      }
+    }
+
+    if (nextEnabled) {
+      nextInstructions = [nextInstructions, REFERENCE_FIDELITY_INSTRUCTIONS]
+        .filter(Boolean)
+        .join("\n\n");
+    }
+    onConfigChange("instructions", nextInstructions);
+  };
+
+  return (
+    <div className="mt-3 rounded-[12px] border border-[#E4DFFC] bg-[#FAF9FF] px-4 py-3">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          checked={enabled}
+          disabled={disabled}
+          onChange={(event) => setEnabled(event.target.checked)}
+          className="mt-1 h-4 w-4 shrink-0 accent-[#7A5AF8]"
+          aria-label="Enable reference fidelity mode"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2 text-sm font-semibold text-[#27233A]">
+            <ShieldCheck aria-hidden="true" className="h-4 w-4 text-[#7A5AF8]" />
+            Reference Fidelity Mode
+          </span>
+          <span className="mt-1 block text-xs leading-5 text-[#67627A]">
+            Prioritizes the selected template&apos;s layout, typography, colors, and original assets. For best results, create a custom template from your reference PPTX first, then select it here.
+          </span>
+        </span>
+      </label>
+    </div>
+  );
+}
+
+export default OutlinePromptBar;");
     const escapedEnd = REFERENCE_FIDELITY_END.replace(/[.*+?^${}()|[\]\\]/g, "\\export default OutlinePromptBar;");
     const blockPattern = new RegExp(`${escapedStart}[\\s\\S]*?${escapedEnd}`, "g");
     nextInstructions = nextInstructions.replace(blockPattern, "").trim();
