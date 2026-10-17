@@ -188,12 +188,17 @@ const OutlinePage: React.FC = () => {
   }, [hasSelectedTemplate, outlineStreamFinished, presentation_id]);
 
   useEffect(() => {
-    if (!autoGenerateRequested || !isOutlineReady || autoGenerateStartedRef.current) {
+    if (
+      !autoGenerateRequested ||
+      !isOutlineReady ||
+      outlines.length === 0 ||
+      autoGenerateStartedRef.current
+    ) {
       return;
     }
     autoGenerateStartedRef.current = true;
     void handleSubmit();
-  }, [autoGenerateRequested, handleSubmit, isOutlineReady]);
+  }, [autoGenerateRequested, handleSubmit, isOutlineReady, outlines.length]);
 
   const handleReturnToTemplates = () => {
     if (streamState.isStreaming) return;
