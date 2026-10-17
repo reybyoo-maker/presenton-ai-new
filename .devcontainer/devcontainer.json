@@ -1,0 +1,24 @@
+{
+  "name": "Presenton Reference Studio",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "forwardPorts": [5001],
+  "portsAttributes": {
+    "5001": {
+      "label": "Presenton Reference Studio",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/start-presenton.sh",
+  "postStartCommand": "bash .devcontainer/start-presenton.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}
