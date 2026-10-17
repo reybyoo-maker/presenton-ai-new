@@ -30,7 +30,7 @@ import { setReferenceFidelityEnabled } from "../outline/utils/reference-fidelity
 import { parseLimitedSlideCount } from "@/utils/presentationLimits";
 
 const MAX_FILE_BYTES = 100 * 1024 * 1024;
-const ACCEPTED_MATERIALS = ".pdf,.doc,.docx,.docm,.odt,.rtf,.ppt,.pptx,.pptm,.odp,.xls,.xlsx,.xlsm,.ods,.csv,.tsv,.txt,.jpg,.jpeg,.png,.gif,.bmp,.tiff,.webp";
+const ACCEPTED_MATERIALS = ".pdf,.doc,.docx,.docm,.odt,.rtf,.ppt,.pptx,.pptm,.odp,.xls,.xlsx,.xlsm,.ods,.csv,.tsv,.txt,.md,.jpg,.jpeg,.png,.gif,.bmp,.tif,.tiff,.webp,.svg";
 
 type StudioStage = "idle" | "font-check" | "render-reference" | "analyze-reference" | "upload-materials" | "prepare-presentation";
 
