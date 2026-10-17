@@ -44,7 +44,8 @@ test("enables reference fidelity without deleting existing user instructions", (
   const result = fidelity.setReferenceFidelityEnabled(original, true);
 
   assert.ok(result.includes(original));
-  assert.ok(result.includes("STRICT DESIGN PRESERVATION"));
+  assert.ok(result.includes("VISUAL STYLE MATCHING, NOT BLIND TEXT REPLACEMENT"));
+  assert.ok(result.includes("Create or source a distinct, subject-specific illustration"));
   assert.ok(result.includes("element positions"));
   assert.ok(fidelity.isReferenceFidelityEnabled(result));
 });
@@ -57,7 +58,7 @@ test("enabling reference fidelity repeatedly does not duplicate the instruction 
     twice.split(fidelity.REFERENCE_FIDELITY_START).length - 1,
     1,
   );
-  assert.equal(twice.split("STRICT DESIGN PRESERVATION").length - 1, 1);
+  assert.equal(twice.split("VISUAL STYLE MATCHING, NOT BLIND TEXT REPLACEMENT").length - 1, 1);
 });
 
 test("disabling reference fidelity removes only its block", () => {
