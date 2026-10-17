@@ -272,12 +272,12 @@ export default function ReferenceStudioPage() {
           throw new Error(templateFlow.state.error || "Template referensi tidak berhasil dibuat.");
         }
 
-        createdTemplateIdRef.current = templateId;
         const details = await TemplateService.getTemplateDetails(templateId);
         const expectedLayoutCount = preview.slide_image_urls.length;
         if (typeof details.layout_count === "number" && details.layout_count < expectedLayoutCount) {
           throw new Error("Template belum lengkap: " + details.layout_count + " dari " + expectedLayoutCount + " layout tersedia. Untuk menjaga akurasi, presentasi belum dilanjutkan. Perbaiki slide yang gagal di Template Builder sebelum mencoba lagi.");
         }
+        createdTemplateIdRef.current = templateId;
       }
 
       setStage("upload-materials");
